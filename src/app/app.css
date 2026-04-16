@@ -423,6 +423,13 @@
   border: 1px solid transparent;
 }
 
+.field-error {
+  margin-top: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #962f2f;
+}
+
 .success {
   background: rgba(67, 179, 124, 0.14);
   color: #146338;

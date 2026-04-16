@@ -24,6 +24,14 @@ export class App {
   message = '';
   error = '';
 
+  showRegisterErrors = false;
+  showLoginErrors = false;
+  registerUsernameError = '';
+  registerPasswordError = '';
+  registerConfirmPasswordError = '';
+  loginUsernameError = '';
+  loginPasswordError = '';
+
   registerName = '';
   registerUsername = '';
   registerPassword = '';
@@ -37,6 +45,19 @@ export class App {
     },
   ];
 
+  private isEmailLike(value: string): boolean {
+    return value.includes('@');
+  }
+
+  private isPasswordValid(value: string): boolean {
+    // UI validation only:
+    // - min 8 chars
+    // - at least one capital letter
+    // - at least one number
+    // - at least one special character
+    return /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(value);
+  }
+
   togglePassword() {
     this.passwordVisible = !this.passwordVisible;
   }
@@ -47,16 +68,21 @@ export class App {
 
   switchMode(isRegisterMode: boolean) {
     this.isRegisterMode = isRegisterMode;
+    this.showRegisterErrors = false;
+    this.showLoginErrors = false;
     this.clearFeedback();
     this.passwordVisible = false;
     this.confirmPasswordVisible = false;
   }
 
   clearFeedback() {
-    if (this.message || this.error) {
-      this.message = '';
-      this.error = '';
-    }
+    this.message = '';
+    this.error = '';
+    this.registerUsernameError = '';
+    this.registerPasswordError = '';
+    this.registerConfirmPasswordError = '';
+    this.loginUsernameError = '';
+    this.loginPasswordError = '';
   }
 
   get canSubmit() {
@@ -74,15 +100,29 @@ export class App {
   }
 
   onLogin() {
+    this.showLoginErrors = true;
     if (!this.canSubmit) {
       this.message = '';
-      this.error = 'Please enter your username and password.';
+      this.error = '';
+      this.loginUsernameError = this.username.trim() ? '' : 'Username is required.';
+      this.loginPasswordError = this.password.trim() ? '' : 'Password is required.';
+      this.isSubmitting = false;
       return;
     }
 
     this.isSubmitting = true;
     const enteredUsername = this.username.trim().toLowerCase();
     const enteredPass = this.password.trim();
+
+    if (!this.isEmailLike(enteredUsername)) {
+      this.message = '';
+      this.error = '';
+      this.loginUsernameError = 'Username must be a valid email address (must contain @).';
+      this.loginPasswordError = '';
+      this.isSubmitting = false;
+      return;
+    }
+
     const matchedUser = this.users.find((user) => user.username.toLowerCase() === enteredUsername);
 
     if (matchedUser && enteredPass === matchedUser.password) {
@@ -90,10 +130,15 @@ export class App {
       this.message = `Welcome back, ${matchedUser.name}. Your Oceanic Retreats account is ready.`;
       this.isLoggedIn = true;
       this.currentUserName = matchedUser.name;
+      this.showLoginErrors = false;
+      this.loginUsernameError = '';
+      this.loginPasswordError = '';
       this.isRegisterMode = false;
     } else {
       this.message = '';
-      this.error = 'Invalid username or password. Please try again.';
+      this.error = '';
+      this.loginUsernameError = '';
+      this.loginPasswordError = 'Invalid username or password. Please try again.';
       this.isLoggedIn = false;
       this.currentUserName = '';
     }
@@ -102,6 +147,7 @@ export class App {
   }
 
   onRegister() {
+    this.showRegisterErrors = true;
     if (!this.canSubmit) {
       this.message = '';
       this.error = 'Please complete all registration fields.';
@@ -114,23 +160,43 @@ export class App {
     const password = this.registerPassword.trim();
     const confirmPassword = this.confirmPassword.trim();
 
-    if (password.length < 8) {
+    if (!this.isEmailLike(username)) {
       this.message = '';
-      this.error = 'Password must be at least 8 characters long.';
+      this.error = '';
+      this.registerUsernameError = 'Username must be a valid email address (must contain @).';
+      this.registerPasswordError = '';
+      this.registerConfirmPasswordError = '';
+      this.isSubmitting = false;
+      return;
+    }
+
+    if (!this.isPasswordValid(password)) {
+      this.message = '';
+      this.error = '';
+      this.registerUsernameError = '';
+      this.registerPasswordError =
+        'Password must be at least 8 characters and contain: 1 capital letter, 1 number, and 1 special character.';
+      this.registerConfirmPasswordError = '';
       this.isSubmitting = false;
       return;
     }
 
     if (password !== confirmPassword) {
       this.message = '';
-      this.error = 'Passwords do not match.';
+      this.error = '';
+      this.registerConfirmPasswordError = 'Passwords do not match.';
+      this.registerUsernameError = '';
+      this.registerPasswordError = '';
       this.isSubmitting = false;
       return;
     }
 
     if (this.users.some((user) => user.username.toLowerCase() === username)) {
       this.message = '';
-      this.error = 'This username is already registered.';
+      this.error = '';
+      this.registerUsernameError = 'This username is already registered.';
+      this.registerPasswordError = '';
+      this.registerConfirmPasswordError = '';
       this.isSubmitting = false;
       return;
     }
@@ -145,6 +211,10 @@ export class App {
     this.confirmPassword = '';
     this.error = '';
     this.message = 'Registration successful. You can register another user below.';
+    this.showRegisterErrors = false;
+    this.registerUsernameError = '';
+    this.registerPasswordError = '';
+    this.registerConfirmPasswordError = '';
     this.isSubmitting = false;
   }
 
