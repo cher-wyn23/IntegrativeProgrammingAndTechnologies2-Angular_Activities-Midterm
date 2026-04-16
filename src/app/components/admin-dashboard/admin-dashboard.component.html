@@ -1,0 +1,26 @@
+<main class="dashboard-card">
+  <div class="dash-header">
+    <p class="dash-badge">Account Dashboard</p>
+    <h2 class="dash-title">Welcome, {{ currentUserName }}!</h2>
+    <p class="dash-subtitle">You are signed in to Oceanic Retreats.</p>
+  </div>
+
+  <div class="dash-section">
+    <div class="dash-row">
+      <div class="dash-label">Username</div>
+      <div class="dash-value">{{ username }}</div>
+    </div>
+    <div class="dash-row">
+      <div class="dash-label">Role</div>
+      <div class="dash-value">{{ currentUserRole }}</div>
+    </div>
+    <div class="dash-row">
+      <div class="dash-label">Status</div>
+      <div class="dash-value">Active</div>
+    </div>
+  </div>
+
+  <div class="dash-actions">
+    <button type="button" class="logout-btn" (click)="logout.emit()">Logout</button>
+  </div>
+</main>

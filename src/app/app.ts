@@ -2,18 +2,40 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RegisteredUserRowComponent } from './components/registered-user-row/registered-user-row.component';
+import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
+import {
+  AccountAuthenticator,
+  AccountRecord,
+  AdminAccount,
+  PasswordPolicy,
+  UserDirectory,
+} from './core/account-oop';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [FormsModule, CommonModule, RegisteredUserRowComponent],
+  imports: [FormsModule, CommonModule, RegisteredUserRowComponent, AdminDashboardComponent],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
 export class App {
+  // OOP Principle 7: Association
+  // The component coordinates these OOP classes, while each class keeps its own job.
+  private readonly passwordPolicy = new PasswordPolicy();
+  private readonly userDirectory = new UserDirectory([
+    {
+      name: 'Cherwyn Malquisto',
+      username: 'malquistocherwyn@gmail.com',
+      password: '12345678',
+    },
+  ]);
+  private readonly authenticator = new AccountAuthenticator(this.userDirectory);
+  private readonly adminAccount = new AdminAccount('Oceanic Retreats Admin', 'admin@oceanicretreats.com', 'Admin@123');
+
   isRegisterMode = false;
   isLoggedIn = false;
   currentUserName = '';
+  currentUserRole = '';
   username = '';
   password = '';
   rememberMe = false;
@@ -36,26 +58,16 @@ export class App {
   registerUsername = '';
   registerPassword = '';
   confirmPassword = '';
-
-  users = [
-    {
-      name: 'Cherwyn Malquisto',
-      username: 'malquistocherwyn@gmail.com',
-      password: '12345678',
-    },
-  ];
+  editingUserIndex: number | null = null;
+  searchTerm = '';
 
   private isEmailLike(value: string): boolean {
     return value.includes('@');
   }
 
-  private isPasswordValid(value: string): boolean {
-    // UI validation only:
-    // - min 8 chars
-    // - at least one capital letter
-    // - at least one number
-    // - at least one special character
-    return /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(value);
+  get users(): AccountRecord[] {
+    // This is where the UI reads plain data records from the OOP directory class.
+    return this.userDirectory.getAllRecords();
   }
 
   togglePassword() {
@@ -73,6 +85,11 @@ export class App {
     this.clearFeedback();
     this.passwordVisible = false;
     this.confirmPasswordVisible = false;
+
+    if (!isRegisterMode) {
+      this.editingUserIndex = null;
+      this.resetRegisterForm();
+    }
   }
 
   clearFeedback() {
@@ -83,6 +100,35 @@ export class App {
     this.registerConfirmPasswordError = '';
     this.loginUsernameError = '';
     this.loginPasswordError = '';
+  }
+
+  resetRegisterForm() {
+    this.registerName = '';
+    this.registerUsername = '';
+    this.registerPassword = '';
+    this.confirmPassword = '';
+    this.passwordVisible = false;
+    this.confirmPasswordVisible = false;
+  }
+
+  get isEditingUser() {
+    return this.editingUserIndex !== null;
+  }
+
+  get registerSubmitLabel() {
+    if (this.isSubmitting) {
+      return this.isEditingUser ? 'Updating Account...' : 'Creating Account...';
+    }
+
+    return this.isEditingUser ? 'Update Account' : 'Create Account';
+  }
+
+  get filteredUsers() {
+    const keyword = this.searchTerm.trim().toLowerCase();
+
+    return this.users
+      .map((user, index) => ({ user, index }))
+      .filter(({ user }) => !keyword || user.name.toLowerCase().includes(keyword));
   }
 
   get canSubmit() {
@@ -123,13 +169,16 @@ export class App {
       return;
     }
 
-    const matchedUser = this.users.find((user) => user.username.toLowerCase() === enteredUsername);
+    // This is where login is delegated to the OOP authenticator class.
+    const matchedUser = this.authenticator.login(enteredUsername, enteredPass);
 
-    if (matchedUser && enteredPass === matchedUser.password) {
+    if (matchedUser) {
       this.error = '';
       this.message = `Welcome back, ${matchedUser.name}. Your Oceanic Retreats account is ready.`;
       this.isLoggedIn = true;
       this.currentUserName = matchedUser.name;
+      this.currentUserRole = `${matchedUser.getRoleLabel()} | ${this.adminAccount.getRoleLabel()}`;
+      this.username = matchedUser.username;
       this.showLoginErrors = false;
       this.loginUsernameError = '';
       this.loginPasswordError = '';
@@ -141,6 +190,7 @@ export class App {
       this.loginPasswordError = 'Invalid username or password. Please try again.';
       this.isLoggedIn = false;
       this.currentUserName = '';
+      this.currentUserRole = '';
     }
 
     this.isSubmitting = false;
@@ -170,12 +220,14 @@ export class App {
       return;
     }
 
-    if (!this.isPasswordValid(password)) {
+    // This is where the password policy class applies validation logic.
+    const passwordValidation = this.passwordPolicy.validate(password);
+
+    if (!passwordValidation.isValid) {
       this.message = '';
       this.error = '';
       this.registerUsernameError = '';
-      this.registerPasswordError =
-        'Password must be at least 8 characters and contain: 1 capital letter, 1 number, and 1 special character.';
+      this.registerPasswordError = passwordValidation.message;
       this.registerConfirmPasswordError = '';
       this.isSubmitting = false;
       return;
@@ -191,7 +243,8 @@ export class App {
       return;
     }
 
-    if (this.users.some((user) => user.username.toLowerCase() === username)) {
+    // This is where duplicate checking is delegated to the OOP directory class.
+    if (this.userDirectory.isUsernameTaken(username, this.editingUserIndex)) {
       this.message = '';
       this.error = '';
       this.registerUsernameError = 'This username is already registered.';
@@ -201,29 +254,77 @@ export class App {
       return;
     }
 
-    this.users.push({ name, username, password });
+    if (this.isEditingUser) {
+      // This is where update CRUD uses the OOP directory class.
+      this.userDirectory.updateUser(this.editingUserIndex!, name, username, password);
+      this.message = 'Account updated successfully.';
+    } else {
+      // This is where create CRUD uses the OOP directory class.
+      this.userDirectory.addUser(name, username, password);
+      this.message = 'Registration successful. You can register another user below.';
+    }
 
     this.username = username;
     this.password = password;
-    this.registerName = '';
-    this.registerUsername = '';
-    this.registerPassword = '';
-    this.confirmPassword = '';
     this.error = '';
-    this.message = 'Registration successful. You can register another user below.';
     this.showRegisterErrors = false;
     this.registerUsernameError = '';
     this.registerPasswordError = '';
     this.registerConfirmPasswordError = '';
+    this.editingUserIndex = null;
+    this.resetRegisterForm();
     this.isSubmitting = false;
+  }
+
+  editUser(index: number) {
+    // This is where the component asks the OOP directory for one account object.
+    const user = this.userDirectory.getUserAt(index);
+    if (!user) {
+      return;
+    }
+
+    this.editingUserIndex = index;
+    this.isRegisterMode = true;
+    this.registerName = user.name;
+    this.registerUsername = user.username;
+    this.registerPassword = user.toRecord().password;
+    this.confirmPassword = user.toRecord().password;
+    this.showRegisterErrors = false;
+    this.clearFeedback();
+  }
+
+  cancelEdit() {
+    this.editingUserIndex = null;
+    this.showRegisterErrors = false;
+    this.clearFeedback();
+    this.resetRegisterForm();
+  }
+
+  deleteUser(index: number) {
+    // This is where delete CRUD uses the OOP directory class.
+    const userToDelete = this.userDirectory.deleteUser(index);
+    if (!userToDelete) {
+      return;
+    }
+
+    if (this.editingUserIndex === index) {
+      this.cancelEdit();
+    } else if (this.editingUserIndex !== null && this.editingUserIndex > index) {
+      this.editingUserIndex -= 1;
+    }
+
+    this.message = `${userToDelete.name} was removed from registered users.`;
+    this.error = '';
   }
 
   logout() {
     this.isLoggedIn = false;
     this.currentUserName = '';
+    this.currentUserRole = '';
     this.username = '';
     this.password = '';
     this.rememberMe = false;
+    this.cancelEdit();
     this.switchMode(false);
   }
 }

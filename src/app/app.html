@@ -19,6 +19,14 @@
 
     <form class="form-block" (ngSubmit)="isRegisterMode ? onRegister() : onLogin()">
       <ng-container *ngIf="isRegisterMode; else loginForm">
+        <div class="form-mode-banner" *ngIf="isEditingUser">
+          <div>
+            <p class="form-mode-label">Editing User</p>
+            <strong>Update the selected account information below.</strong>
+          </div>
+          <button type="button" class="ghost-btn" (click)="cancelEdit()">Cancel</button>
+        </div>
+
         <div class="input-group">
           <label for="register-name">Full Name</label>
           <div class="text-field">
@@ -141,7 +149,7 @@
         </div>
 
         <button class="login-btn" type="submit" [disabled]="!canSubmit">
-          {{ isSubmitting ? 'Creating Account...' : 'Create Account' }}
+          {{ registerSubmitLabel }}
         </button>
       </ng-container>
 
@@ -233,43 +241,59 @@
     </form>
 
     <div class="reg-users" *ngIf="isRegisterMode && users.length > 1">
-      <h3 class="reg-users-title">Registered Users</h3>
-      <table class="reg-users-table" aria-label="Registered users table">
-        <thead>
-          <tr>
-            <th scope="col">Full Name</th>
-            <th scope="col">Username</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let u of users" appRegisteredUserRow [user]="u"></tr>
-        </tbody>
-      </table>
+      <div class="reg-users-header">
+        <div>
+          <h3 class="reg-users-title">Registered Users</h3>
+          <p class="reg-users-subtitle">Search, edit, and delete guest accounts from the table below.</p>
+        </div>
+        <span class="reg-users-count">{{ filteredUsers.length }} found</span>
+      </div>
+
+      <div class="search-field">
+        <span class="field-icon" aria-hidden="true">⌕</span>
+        <input
+          type="text"
+          placeholder="Search registered names"
+          [(ngModel)]="searchTerm"
+          [ngModelOptions]="{ standalone: true }"
+        />
+      </div>
+
+      <div class="reg-users-table-wrap">
+        <table class="reg-users-table" aria-label="Registered users table">
+          <thead>
+            <tr>
+              <th scope="col">Full Name</th>
+              <th scope="col">Username</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let row of filteredUsers"
+              appRegisteredUserRow
+              [user]="row.user"
+              [index]="row.index"
+              [isEditing]="editingUserIndex === row.index"
+              (edit)="editUser($event)"
+              (delete)="deleteUser($event)"
+              [class.is-editing-row]="editingUserIndex === row.index"
+            ></tr>
+            <tr *ngIf="filteredUsers.length === 0">
+              <td colspan="3" class="empty-state-cell">No registered users match your search.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </main>
 
   <ng-template #dashboard>
-    <main class="dashboard-card">
-      <div class="dash-header">
-        <p class="dash-badge">Account Dashboard</p>
-        <h2 class="dash-title">Welcome, {{ currentUserName }}!</h2>
-        <p class="dash-subtitle">You are signed in to Oceanic Retreats.</p>
-      </div>
-
-      <div class="dash-section">
-        <div class="dash-row">
-          <div class="dash-label">Username</div>
-          <div class="dash-value">{{ username }}</div>
-        </div>
-        <div class="dash-row">
-          <div class="dash-label">Status</div>
-          <div class="dash-value">Active</div>
-        </div>
-      </div>
-
-      <div class="dash-actions">
-        <button type="button" class="logout-btn" (click)="logout()">Logout</button>
-      </div>
-    </main>
+    <app-admin-dashboard
+      [currentUserName]="currentUserName"
+      [currentUserRole]="currentUserRole"
+      [username]="username"
+      (logout)="logout()"
+    ></app-admin-dashboard>
   </ng-template>
 </div>
