@@ -1,286 +1,35 @@
 <div class="page-shell">
   <div class="background-overlay"></div>
 
-  <main class="login-card" *ngIf="!isLoggedIn; else dashboard">
-    <section class="brand-block">
-      <div class="brand-mark" aria-hidden="true">
-        <span class="wave wave-one"></span>
-        <span class="wave wave-two"></span>
-        <span class="wave wave-three"></span>
-      </div>
-      <div class="brand-copy">
-        <p class="brand-name">Oceanic Retreats</p>
-        <h1>{{ isRegisterMode ? 'Create Account' : 'Welcome Back!' }}</h1>
-        <p class="brand-subtitle">
-          {{ isRegisterMode ? 'Register a new guest account.' : 'Sign in to your account.' }}
-        </p>
-      </div>
-    </section>
-
-    <form class="form-block" (ngSubmit)="isRegisterMode ? onRegister() : onLogin()">
-      <ng-container *ngIf="isRegisterMode; else loginForm">
-        <div class="form-mode-banner" *ngIf="isEditingUser">
-          <div>
-            <p class="form-mode-label">Editing User</p>
-            <strong>Update the selected account information below.</strong>
-          </div>
-          <button type="button" class="ghost-btn" (click)="cancelEdit()">Cancel</button>
-        </div>
-
-        <div class="input-group">
-          <label for="register-name">Full Name</label>
-          <div class="text-field">
-            <span class="field-icon" aria-hidden="true">👤</span>
-            <input
-              id="register-name"
-              type="text"
-              placeholder="Enter your full name"
-              [(ngModel)]="registerName"
-              [ngModelOptions]="{ standalone: true }"
-              (ngModelChange)="clearFeedback()"
-              autocomplete="name"
-            />
-          </div>
-        </div>
-
-        <div class="input-group">
-          <label for="register-username">Username</label>
-          <div class="text-field">
-            <span class="field-icon" aria-hidden="true">✉</span>
-            <input
-              id="register-username"
-              type="text"
-              placeholder="yourusername"
-              [(ngModel)]="registerUsername"
-              [ngModelOptions]="{ standalone: true }"
-              (ngModelChange)="clearFeedback()"
-              autocomplete="username"
-            />
-          </div>
-          <div class="field-error" *ngIf="showRegisterErrors && registerUsernameError">
-            {{ registerUsernameError }}
-          </div>
-        </div>
-
-        <div class="input-group">
-          <label for="register-password">Password</label>
-          <div class="text-field password-field">
-            <span class="field-icon" aria-hidden="true">●</span>
-            <input
-              id="register-password"
-              [type]="passwordVisible ? 'text' : 'password'"
-              placeholder="Create a password"
-              [(ngModel)]="registerPassword"
-              [ngModelOptions]="{ standalone: true }"
-              (ngModelChange)="clearFeedback()"
-              autocomplete="new-password"
-            />
-            <button
-              type="button"
-              class="toggle-visibility"
-              (click)="togglePassword()"
-              [attr.aria-label]="passwordVisible ? 'Hide password' : 'Show password'"
-            >
-              <svg
-                *ngIf="!passwordVisible"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                focusable="false"
-              >
-                <path d="M1.5 12s3.8-6.5 10.5-6.5S22.5 12 22.5 12s-3.8 6.5-10.5 6.5S1.5 12 1.5 12Z" />
-                <circle cx="12" cy="12" r="3.2" />
-              </svg>
-              <svg
-                *ngIf="passwordVisible"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                focusable="false"
-              >
-                <path d="M3 4.5 20 19.5M10.6 6C11 5.9 11.5 5.9 12 5.9c6.7 0 10.5 6.1 10.5 6.1a19 19 0 0 1-4 4.3M6.2 8A18.5 18.5 0 0 0 1.5 12s3.8 6.1 10.5 6.1c1.5 0 2.9-.3 4.2-.9M9.9 9.7a3.3 3.3 0 0 0 4.4 4" />
-              </svg>
-            </button>
-          </div>
-          <div class="field-error" *ngIf="showRegisterErrors && registerPasswordError">
-            {{ registerPasswordError }}
-          </div>
-        </div>
-
-        <div class="input-group">
-          <label for="confirm-password">Confirm Password</label>
-          <div class="text-field password-field">
-            <span class="field-icon" aria-hidden="true">●</span>
-            <input
-              id="confirm-password"
-              [type]="confirmPasswordVisible ? 'text' : 'password'"
-              placeholder="Confirm your password"
-              [(ngModel)]="confirmPassword"
-              [ngModelOptions]="{ standalone: true }"
-              (ngModelChange)="clearFeedback()"
-              autocomplete="new-password"
-            />
-            <button
-              type="button"
-              class="toggle-visibility"
-              (click)="toggleConfirmPassword()"
-              [attr.aria-label]="confirmPasswordVisible ? 'Hide password' : 'Show password'"
-            >
-              <svg
-                *ngIf="!confirmPasswordVisible"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                focusable="false"
-              >
-                <path d="M1.5 12s3.8-6.5 10.5-6.5S22.5 12 22.5 12s-3.8 6.5-10.5 6.5S1.5 12 1.5 12Z" />
-                <circle cx="12" cy="12" r="3.2" />
-              </svg>
-              <svg
-                *ngIf="confirmPasswordVisible"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                focusable="false"
-              >
-                <path d="M3 4.5 20 19.5M10.6 6C11 5.9 11.5 5.9 12 5.9c6.7 0 10.5 6.1 10.5 6.1a19 19 0 0 1-4 4.3M6.2 8A18.5 18.5 0 0 0 1.5 12s3.8 6.1 10.5 6.1c1.5 0 2.9-.3 4.2-.9M9.9 9.7a3.3 3.3 0 0 0 4.4 4" />
-              </svg>
-            </button>
-          </div>
-          <div class="field-error" *ngIf="showRegisterErrors && registerConfirmPasswordError">
-            {{ registerConfirmPasswordError }}
-          </div>
-        </div>
-
-        <button class="login-btn" type="submit" [disabled]="!canSubmit">
-          {{ registerSubmitLabel }}
-        </button>
-      </ng-container>
-
-      <ng-template #loginForm>
-        <div class="input-group">
-          <label for="username">Username</label>
-          <div class="text-field">
-            <span class="field-icon" aria-hidden="true">✉</span>
-            <input
-              id="username"
-              type="text"
-              placeholder="yourusername"
-              [(ngModel)]="username"
-              [ngModelOptions]="{ standalone: true }"
-              (ngModelChange)="clearFeedback()"
-              autocomplete="username"
-            />
-          </div>
-          <div class="field-error" *ngIf="showLoginErrors && loginUsernameError">
-            {{ loginUsernameError }}
-          </div>
-        </div>
-
-        <div class="input-group">
-          <label for="password">Password</label>
-          <div class="text-field password-field">
-            <span class="field-icon" aria-hidden="true">●</span>
-            <input
-              id="password"
-              [type]="passwordVisible ? 'text' : 'password'"
-              placeholder="Enter your password"
-              [(ngModel)]="password"
-              [ngModelOptions]="{ standalone: true }"
-              (ngModelChange)="clearFeedback()"
-              autocomplete="current-password"
-            />
-            <button
-              type="button"
-              class="toggle-visibility"
-              (click)="togglePassword()"
-              [attr.aria-label]="passwordVisible ? 'Hide password' : 'Show password'"
-            >
-              <svg
-                *ngIf="!passwordVisible"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                focusable="false"
-              >
-                <path d="M1.5 12s3.8-6.5 10.5-6.5S22.5 12 22.5 12s-3.8 6.5-10.5 6.5S1.5 12 1.5 12Z" />
-                <circle cx="12" cy="12" r="3.2" />
-              </svg>
-              <svg
-                *ngIf="passwordVisible"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                focusable="false"
-              >
-                <path d="M3 4.5 20 19.5M10.6 6C11 5.9 11.5 5.9 12 5.9c6.7 0 10.5 6.1 10.5 6.1a19 19 0 0 1-4 4.3M6.2 8A18.5 18.5 0 0 0 1.5 12s3.8 6.1 10.5 6.1c1.5 0 2.9-.3 4.2-.9M9.9 9.7a3.3 3.3 0 0 0 4.4 4" />
-              </svg>
-            </button>
-          </div>
-          <div class="field-error" *ngIf="showLoginErrors && loginPasswordError">
-            {{ loginPasswordError }}
-          </div>
-        </div>
-
-        <div class="options">
-          <label class="remember-option">
-            <input type="checkbox" [(ngModel)]="rememberMe" [ngModelOptions]="{ standalone: true }">
-            <span>Remember Me</span>
-          </label>
-          <a href="#">Forgot Password?</a>
-        </div>
-
-        <button class="login-btn" type="submit" [disabled]="!canSubmit">
-          {{ isSubmitting ? 'Signing In...' : 'Sign In' }}
-        </button>
-      </ng-template>
-
-      <div class="feedback success" *ngIf="message">{{ message }}</div>
-      <div class="feedback error" *ngIf="error">{{ error }}</div>
-
-      <p class="signup-link">
-        {{ isRegisterMode ? 'Already have an account?' : "Don't have an account?" }}
-        <a href="#" (click)="$event.preventDefault(); switchMode(!isRegisterMode)">
-          {{ isRegisterMode ? 'Sign In' : 'Sign Up' }}
-        </a>
-      </p>
-    </form>
-
-    <div class="reg-users" *ngIf="isRegisterMode && users.length > 1">
-      <div class="reg-users-header">
-        <div>
-          <h3 class="reg-users-title">Registered Users</h3>
-          <p class="reg-users-subtitle">Manage guest accounts with quick edit and delete actions.</p>
-        </div>
-        <span class="reg-users-count">{{ users.length }} accounts</span>
-      </div>
-
-      <div class="reg-users-table-wrap">
-        <table class="reg-users-table" aria-label="Registered users table">
-          <thead>
-            <tr>
-              <th scope="col">Full Name</th>
-              <th scope="col">Username</th>
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              *ngFor="let u of users; let i = index"
-              appRegisteredUserRow
-              [user]="u"
-              [index]="i"
-              [isEditing]="editingUserIndex === i"
-              (edit)="editUser($event)"
-              (delete)="deleteUser($event)"
-              [class.is-editing-row]="editingUserIndex === i"
-            ></tr>
-          </tbody>
-        </table>
+  <main class="portfolio-page">
+    <div class="portfolio-header">
+      <div>
+        <p class="portfolio-badge">My Portfolio</p>
+        <h1 class="portfolio-title">Personal Profile</h1>
       </div>
     </div>
-  </main>
 
-  <ng-template #dashboard>
-    <app-admin-dashboard
-      [currentUserName]="currentUserName"
-      [currentUserRole]="currentUserRole"
-      [username]="username"
-      (logout)="logout()"
-    ></app-admin-dashboard>
-  </ng-template>
+    <section class="portfolio-content">
+      <h2>Cherwyn A. Malquisto</h2>
+      <p><strong>BSIT 3A Student • EVSU Dulag Campus</strong></p>
+
+      <p>
+        I am Cherwyn A. Malquisto, currently a Bachelor of Science in Information Technology (BSIT 3A)
+        student at EVSU Dulag Campus. I am passionate about digital creativity and technology, and I
+        continuously strive to improve my skills in the field of IT.
+      </p>
+
+      <p>
+        My interests focus on digital editing, including video editing, photo editing, and photography.
+        I enjoy capturing moments and transforming them into creative visual content. Through these skills,
+        I aim to combine creativity and technology to produce engaging and meaningful outputs.
+      </p>
+
+      <p>
+        As an IT student, I am also eager to learn more about modern technologies and enhance my abilities
+        in web development and digital design. I am committed to growing both technically and creatively
+        to prepare myself for future opportunities in the IT industry.
+      </p>
+    </section>
+  </main>
 </div>
