@@ -1,1 +1,104 @@
 /* You can add global styles to this file, and also import other style files */
+
+.dashboard-card {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 420px);
+  padding: 26px 24px 22px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.5));
+  box-shadow:
+    0 20px 45px rgba(12, 29, 52, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(14px);
+}
+
+.dash-header {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.dash-badge {
+  margin: 0 0 8px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #3b6688;
+}
+
+.dash-title {
+  margin: 0;
+  font-size: 1.45rem;
+  color: #12233a;
+}
+
+.dash-subtitle {
+  margin: 8px 0 0;
+  font-size: 0.9rem;
+  color: #314f68;
+}
+
+.dash-section {
+  border-radius: 16px;
+  padding: 14px 14px;
+  border: 1px solid rgba(31, 72, 105, 0.14);
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.dash-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 4px;
+}
+
+.dash-row + .dash-row {
+  border-top: 1px solid rgba(31, 72, 105, 0.12);
+}
+
+.dash-label {
+  font-weight: 700;
+  color: #39556c;
+  font-size: 0.88rem;
+}
+
+.dash-value {
+  color: #12233a;
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.dash-actions {
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+}
+
+.logout-btn {
+  border: 0;
+  cursor: pointer;
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-weight: 800;
+  color: #17324a;
+  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(31, 72, 105, 0.16);
+  box-shadow: 0 14px 30px rgba(12, 29, 52, 0.12);
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.logout-btn:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 18px 32px rgba(12, 29, 52, 0.16);
+}
+
+@media (max-width: 520px) {
+  .dashboard-card {
+    width: min(100%, 340px);
+    padding: 22px 18px 20px;
+  }
+}
