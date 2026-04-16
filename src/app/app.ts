@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { RegisteredUserRowComponent } from './components/registered-user-row/registered-user-row.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, RegisteredUserRowComponent],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
@@ -142,8 +143,8 @@ export class App {
     this.registerUsername = '';
     this.registerPassword = '';
     this.confirmPassword = '';
-    this.switchMode(false);
-    this.message = 'Registration successful. You can now sign in with your new account.';
+    this.error = '';
+    this.message = 'Registration successful. You can register another user below.';
     this.isSubmitting = false;
   }
 

@@ -348,6 +348,73 @@
   box-shadow: 0 10px 20px rgba(43, 137, 189, 0.2);
 }
 
+.reg-users {
+  margin-top: 16px;
+  width: 100%;
+  display: block;
+  position: relative;
+  z-index: 1;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(31, 72, 105, 0.18);
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow: 0 18px 40px rgba(12, 29, 52, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.reg-users:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 28px 70px rgba(12, 29, 52, 0.16);
+  background: rgba(255, 255, 255, 0.78);
+  outline: 2px solid rgba(76, 165, 216, 0.25);
+  border-color: rgba(76, 165, 216, 0.25);
+}
+
+.reg-users-title {
+  margin: 0 0 10px;
+  font-size: 1rem;
+  font-weight: 900;
+  color: #12233a;
+}
+
+.reg-users-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  color: #183047;
+}
+
+.reg-users-table th,
+.reg-users-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(31, 72, 105, 0.12);
+}
+
+.reg-users-table thead th {
+  background: rgba(59, 102, 136, 0.10);
+  border-bottom: 1px solid rgba(31, 72, 105, 0.18);
+  font-weight: 950;
+  color: #2a4d66;
+}
+
+.reg-users-table tbody tr:nth-child(odd) td {
+  background: rgba(255, 255, 255, 0.56);
+}
+
+.reg-users-table tbody tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.70);
+}
+
+.reg-users-table tbody tr:hover td {
+  background: rgba(76, 165, 216, 0.14);
+}
+
+.reg-users-table td:last-child,
+.reg-users-table th:last-child {
+  text-align: right;
+}
+
 .feedback {
   padding: 9px 12px;
   border-radius: 12px;
