@@ -1,7 +1,7 @@
 <div class="page-shell">
   <div class="background-overlay"></div>
 
-  <main class="login-card">
+  <main class="login-card" *ngIf="!isLoggedIn; else dashboardView">
     <section class="brand-block">
       <div class="brand-mark" aria-hidden="true">
         <span class="wave wave-one"></span>
@@ -97,4 +97,47 @@
       </p>
     </form>
   </main>
+
+  <ng-template #dashboardView>
+    <main class="dashboard-card">
+      <section class="dashboard-hero">
+        <div>
+          <p class="dashboard-badge">Welcome Aboard</p>
+          <h1 class="dashboard-title">Hello, {{ currentUserName }}!</h1>
+          <p class="dashboard-subtitle">
+            Your Oceanic Retreats dashboard is ready. Review your account and enjoy a smooth stay-planning experience.
+          </p>
+        </div>
+        <button type="button" class="logout-btn" (click)="logout()">Logout</button>
+      </section>
+
+      <section class="dashboard-grid">
+        <article class="dashboard-panel dashboard-panel-feature">
+          <p class="panel-kicker">Account Overview</p>
+          <h2>Everything looks ready</h2>
+          <p>
+            Your sign-in was successful, your account is active, and your guest profile is available for your next visit.
+          </p>
+        </article>
+
+        <article class="dashboard-panel dashboard-stat-card">
+          <span class="stat-label">Email</span>
+          <strong>{{ email }}</strong>
+          <span class="stat-meta">Primary account</span>
+        </article>
+
+        <article class="dashboard-panel dashboard-stat-card">
+          <span class="stat-label">Status</span>
+          <strong>Active</strong>
+          <span class="stat-meta">Ready to use</span>
+        </article>
+
+        <article class="dashboard-panel dashboard-stat-card">
+          <span class="stat-label">Session</span>
+          <strong>{{ rememberMe ? 'Remembered' : 'Standard' }}</strong>
+          <span class="stat-meta">{{ rememberMe ? 'Quick access enabled' : 'Manual login mode' }}</span>
+        </article>
+      </section>
+    </main>
+  </ng-template>
 </div>
