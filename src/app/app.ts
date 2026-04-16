@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RegisteredUserRowComponent } from './components/registered-user-row/registered-user-row.component';
+import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [FormsModule, CommonModule, RegisteredUserRowComponent],
+  imports: [FormsModule, CommonModule, RegisteredUserRowComponent, AdminDashboardComponent],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
