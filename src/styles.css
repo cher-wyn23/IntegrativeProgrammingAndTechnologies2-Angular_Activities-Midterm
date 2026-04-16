@@ -96,9 +96,84 @@
   box-shadow: 0 18px 32px rgba(12, 29, 52, 0.16);
 }
 
+.portfolio-page {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 860px);
+  padding: 30px 28px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.58));
+  box-shadow:
+    0 24px 55px rgba(12, 29, 52, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(14px);
+}
+
+.portfolio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.portfolio-badge {
+  margin: 0 0 10px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #3b6688;
+}
+
+.portfolio-title {
+  margin: 0;
+  font-size: 2rem;
+  color: #12233a;
+}
+
+.portfolio-content {
+  border-radius: 20px;
+  padding: 22px;
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid rgba(31, 72, 105, 0.14);
+}
+
+.portfolio-content h2 {
+  margin: 0 0 8px;
+  font-size: 1.8rem;
+  color: #16324a;
+}
+
+.portfolio-content p {
+  margin: 0 0 16px;
+  line-height: 1.7;
+  color: #35536b;
+  font-size: 0.96rem;
+}
+
+.portfolio-content p:last-child {
+  margin-bottom: 0;
+}
+
 @media (max-width: 520px) {
   .dashboard-card {
     width: min(100%, 340px);
     padding: 22px 18px 20px;
+  }
+
+  .portfolio-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .portfolio-page {
+    width: min(100%, 360px);
+    padding: 22px 18px 20px;
+  }
+
+  .portfolio-title {
+    font-size: 1.6rem;
   }
 }

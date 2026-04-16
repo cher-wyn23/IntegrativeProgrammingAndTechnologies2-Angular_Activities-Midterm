@@ -39,6 +39,7 @@ export class App {
 
   isRegisterMode = false;
   isLoggedIn = false;
+  isPortfolioOpen = false;
   currentUserName = '';
   currentUserRole = '';
   username = '';
@@ -80,6 +81,14 @@ export class App {
 
   toggleConfirmPassword() {
     this.confirmPasswordVisible = !this.confirmPasswordVisible;
+  }
+
+  openPortfolio() {
+    this.isPortfolioOpen = true;
+  }
+
+  closePortfolio() {
+    this.isPortfolioOpen = false;
   }
 
   switchMode(isRegisterMode: boolean) {

@@ -1,7 +1,16 @@
 <div class="page-shell">
   <div class="background-overlay"></div>
 
-  <main class="login-card" *ngIf="!isLoggedIn; else dashboard">
+  <button
+    type="button"
+    class="portfolio-fab"
+    *ngIf="!isPortfolioOpen"
+    (click)="openPortfolio()"
+  >
+    My Portfolio
+  </button>
+
+  <main class="login-card" *ngIf="!isLoggedIn && !isPortfolioOpen; else appStateView">
     <section class="brand-block">
       <div class="brand-mark" aria-hidden="true">
         <span class="wave wave-one"></span>
@@ -275,12 +284,49 @@
     </div>
   </main>
 
-  <ng-template #dashboard>
-    <app-admin-dashboard
-      [currentUserName]="currentUserName"
-      [currentUserRole]="currentUserRole"
-      [username]="username"
-      (logout)="logout()"
-    ></app-admin-dashboard>
+  <ng-template #appStateView>
+    <ng-container *ngIf="isPortfolioOpen; else dashboard">
+      <main class="portfolio-page">
+        <div class="portfolio-header">
+          <div>
+            <p class="portfolio-badge">My Portfolio</p>
+            <h1 class="portfolio-title">Personal Profile</h1>
+          </div>
+          <button type="button" class="ghost-btn" (click)="closePortfolio()">Back to Login</button>
+        </div>
+
+        <section class="portfolio-content">
+          <h2>Cherwyn A. Malquisto</h2>
+          <p><strong>BSIT 3A Student • EVSU Dulag Campus</strong></p>
+
+          <p>
+            I am Cherwyn A. Malquisto, currently a Bachelor of Science in Information Technology (BSIT 3A)
+            student at EVSU Dulag Campus. I am passionate about digital creativity and technology, and I
+            continuously strive to improve my skills in the field of IT.
+          </p>
+
+          <p>
+            My interests focus on digital editing, including video editing, photo editing, and photography.
+            I enjoy capturing moments and transforming them into creative visual content. Through these skills,
+            I aim to combine creativity and technology to produce engaging and meaningful outputs.
+          </p>
+
+          <p>
+            As an IT student, I am also eager to learn more about modern technologies and enhance my abilities
+            in web development and digital design. I am committed to growing both technically and creatively
+            to prepare myself for future opportunities in the IT industry.
+          </p>
+        </section>
+      </main>
+    </ng-container>
+
+    <ng-template #dashboard>
+      <app-admin-dashboard
+        [currentUserName]="currentUserName"
+        [currentUserRole]="currentUserRole"
+        [username]="username"
+        (logout)="logout()"
+      ></app-admin-dashboard>
+    </ng-template>
   </ng-template>
 </div>
