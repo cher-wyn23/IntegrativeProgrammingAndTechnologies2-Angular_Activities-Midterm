@@ -19,7 +19,7 @@ export class App {
   message = '';
   error = '';
 
-  correctEmail = 'cherwyn@gmail.com';
+  correctEmail = 'malquistocherwyn@gmail.com';
   correctPassword = '12345678'; 
 
   togglePassword() {
