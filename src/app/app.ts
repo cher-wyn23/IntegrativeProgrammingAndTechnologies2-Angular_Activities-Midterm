@@ -10,20 +10,45 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./app.css']
 })
 export class App {
-  email = '';
+  isRegisterMode = false;
+  isLoggedIn = false;
+  currentUserName = '';
+  username = '';
   password = '';
   rememberMe = false;
   passwordVisible = false;
+  confirmPasswordVisible = false;
   isSubmitting = false;
 
   message = '';
   error = '';
 
-  correctEmail = 'cherwyn@gmail.com';
-  correctPassword = '12345678'; 
+  registerName = '';
+  registerUsername = '';
+  registerPassword = '';
+  confirmPassword = '';
+
+  users = [
+    {
+      name: 'Cherwyn Malquisto',
+      username: 'malquistocherwyn@gmail.com',
+      password: '12345678',
+    },
+  ];
 
   togglePassword() {
     this.passwordVisible = !this.passwordVisible;
+  }
+
+  toggleConfirmPassword() {
+    this.confirmPasswordVisible = !this.confirmPasswordVisible;
+  }
+
+  switchMode(isRegisterMode: boolean) {
+    this.isRegisterMode = isRegisterMode;
+    this.clearFeedback();
+    this.passwordVisible = false;
+    this.confirmPasswordVisible = false;
   }
 
   clearFeedback() {
@@ -34,29 +59,100 @@ export class App {
   }
 
   get canSubmit() {
-    return this.email.trim() !== '' && this.password.trim() !== '' && !this.isSubmitting;
+    if (this.isRegisterMode) {
+      return (
+        this.registerName.trim() !== '' &&
+        this.registerUsername.trim() !== '' &&
+        this.registerPassword.trim() !== '' &&
+        this.confirmPassword.trim() !== '' &&
+        !this.isSubmitting
+      );
+    }
+
+    return this.username.trim() !== '' && this.password.trim() !== '' && !this.isSubmitting;
   }
 
   onLogin() {
     if (!this.canSubmit) {
       this.message = '';
-      this.error = 'Please enter your email and password.';
+      this.error = 'Please enter your username and password.';
       return;
     }
 
     this.isSubmitting = true;
-    const enteredEmail = this.email.trim().toLowerCase();
-    const correctEmail = this.correctEmail.trim().toLowerCase();
+    const enteredUsername = this.username.trim().toLowerCase();
     const enteredPass = this.password.trim();
+    const matchedUser = this.users.find((user) => user.username.toLowerCase() === enteredUsername);
 
-    if (enteredEmail === correctEmail && enteredPass === this.correctPassword) {
+    if (matchedUser && enteredPass === matchedUser.password) {
       this.error = '';
-      this.message = 'Welcome back to Oceanic Retreats. Your coastal getaway dashboard is ready.';
+      this.message = `Welcome back, ${matchedUser.name}. Your Oceanic Retreats account is ready.`;
+      this.isLoggedIn = true;
+      this.currentUserName = matchedUser.name;
+      this.isRegisterMode = false;
     } else {
       this.message = '';
-      this.error = 'Invalid email or password. Please try again.';
+      this.error = 'Invalid username or password. Please try again.';
+      this.isLoggedIn = false;
+      this.currentUserName = '';
     }
 
     this.isSubmitting = false;
+  }
+
+  onRegister() {
+    if (!this.canSubmit) {
+      this.message = '';
+      this.error = 'Please complete all registration fields.';
+      return;
+    }
+
+    this.isSubmitting = true;
+    const name = this.registerName.trim();
+    const username = this.registerUsername.trim().toLowerCase();
+    const password = this.registerPassword.trim();
+    const confirmPassword = this.confirmPassword.trim();
+
+    if (password.length < 8) {
+      this.message = '';
+      this.error = 'Password must be at least 8 characters long.';
+      this.isSubmitting = false;
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      this.message = '';
+      this.error = 'Passwords do not match.';
+      this.isSubmitting = false;
+      return;
+    }
+
+    if (this.users.some((user) => user.username.toLowerCase() === username)) {
+      this.message = '';
+      this.error = 'This username is already registered.';
+      this.isSubmitting = false;
+      return;
+    }
+
+    this.users.push({ name, username, password });
+
+    this.username = username;
+    this.password = password;
+    this.registerName = '';
+    this.registerUsername = '';
+    this.registerPassword = '';
+    this.confirmPassword = '';
+    this.switchMode(false);
+    this.message = 'Registration successful. You can now sign in with your new account.';
+    this.isSubmitting = false;
+  }
+
+  logout() {
+    this.isLoggedIn = false;
+    this.currentUserName = '';
+    this.username = '';
+    this.password = '';
+    this.rememberMe = false;
+    this.switchMode(false);
   }
 }
