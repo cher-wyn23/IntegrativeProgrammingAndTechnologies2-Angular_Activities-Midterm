@@ -10,36 +10,53 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./app.css']
 })
 export class App {
-
-  username = '';
+  email = '';
   password = '';
-
-  passwordVisible = false; 
+  rememberMe = false;
+  passwordVisible = false;
+  isSubmitting = false;
 
   message = '';
   error = '';
 
-  correctUsername = 'JOHN ROQUE B. ABINA';
-  correctPassword = '2023-00145'; 
+  correctEmail = 'cherwyn@gmail.com';
+  correctPassword = '12345678'; 
 
   togglePassword() {
     this.passwordVisible = !this.passwordVisible;
   }
 
-  onLogin() {
-    const enteredUser = this.username.trim().toUpperCase();
-    const correctUser = this.correctUsername.trim().toUpperCase();
+  clearFeedback() {
+    if (this.message || this.error) {
+      this.message = '';
+      this.error = '';
+    }
+  }
 
+  get canSubmit() {
+    return this.email.trim() !== '' && this.password.trim() !== '' && !this.isSubmitting;
+  }
+
+  onLogin() {
+    if (!this.canSubmit) {
+      this.message = '';
+      this.error = 'Please enter your email and password.';
+      return;
+    }
+
+    this.isSubmitting = true;
+    const enteredEmail = this.email.trim().toLowerCase();
+    const correctEmail = this.correctEmail.trim().toLowerCase();
     const enteredPass = this.password.trim();
 
-
-    if (enteredUser === correctUser && enteredPass === this.correctPassword) {
+    if (enteredEmail === correctEmail && enteredPass === this.correctPassword) {
       this.error = '';
-      this.message =
-        `Welcome, ${this.correctUsername}! You have successfully logged in. Have a productive learning experience in Integrative Programming and Technologies 2.`;
+      this.message = 'Welcome back to Oceanic Retreats. Your coastal getaway dashboard is ready.';
     } else {
       this.message = '';
-      this.error = 'Invalid username or password. Please try again.';
+      this.error = 'Invalid email or password. Please try again.';
     }
+
+    this.isSubmitting = false;
   }
 }

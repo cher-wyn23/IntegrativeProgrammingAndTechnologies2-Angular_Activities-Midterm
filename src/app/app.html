@@ -1,50 +1,100 @@
-<div class="wrapper">
+<div class="page-shell">
+  <div class="background-overlay"></div>
 
-  <div class="left-panel">
-    <img src="/css.jpg" alt="CampusAssist Logo" class="side-image">
-
-    <div class="logo">CampusAssist</div>
-    <h1>Complaint Monitoring System</h1>
-    <p>Manage, track, and monitor student concerns efficiently.</p>
-  </div>
-
-  <div class="right-panel">
-    <h2>Login</h2>
-
-    <div class="input-group">
-      <label>Username</label>
-      <input 
-        type="text" 
-        placeholder="Enter your username"
-        [(ngModel)]="username"
-      />
-    </div>
-    <div class="input-group">
-      <label>Password</label>
-
-      <div class="password-wrapper">
-        <input 
-          [type]="passwordVisible ? 'text' : 'password'"
-          placeholder="Enter your password"
-          [(ngModel)]="password"
-        />
-
-        <span class="eye-icon" (click)="togglePassword()">
-          {{ passwordVisible ? '🙈' : '👁️' }}
-        </span>
+  <main class="login-card">
+    <section class="brand-block">
+      <div class="brand-mark" aria-hidden="true">
+        <span class="wave wave-one"></span>
+        <span class="wave wave-two"></span>
+        <span class="wave wave-three"></span>
       </div>
-    </div>
+      <div class="brand-copy">
+        <p class="brand-name">Oceanic Retreats</p>
+        <h1>Welcome Back!</h1>
+        <p class="brand-subtitle">Sign in to your account.</p>
+      </div>
+    </section>
 
-    <div class="options">
-      <label>
-        <input type="checkbox"> Remember me
-      </label>
-      <a href="#">Forgot password?</a>
-    </div>
+    <form class="form-block" (ngSubmit)="onLogin()">
+      <div class="input-group">
+        <label for="email">Email Address</label>
+        <div class="text-field">
+          <span class="field-icon" aria-hidden="true">✉</span>
+          <input
+            id="email"
+            type="email"
+            placeholder="email@example.com"
+            [(ngModel)]="email"
+            [ngModelOptions]="{ standalone: true }"
+            (ngModelChange)="clearFeedback()"
+            autocomplete="email"
+          />
+        </div>
+      </div>
 
-    <button class="login-btn" (click)="onLogin()">Login</button>
-    <div class="success" *ngIf="message">{{ message }}</div>
-    <div class="error" *ngIf="error">{{ error }}</div>
-  </div>
+      <div class="input-group">
+        <label for="password">Password</label>
+        <div class="text-field password-field">
+          <span class="field-icon" aria-hidden="true">●</span>
+          <input
+            id="password"
+            [type]="passwordVisible ? 'text' : 'password'"
+            placeholder="Enter your password"
+            [(ngModel)]="password"
+            [ngModelOptions]="{ standalone: true }"
+            (ngModelChange)="clearFeedback()"
+            autocomplete="current-password"
+          />
+          <button
+            type="button"
+            class="toggle-visibility"
+            (click)="togglePassword()"
+            [attr.aria-label]="passwordVisible ? 'Hide password' : 'Show password'"
+          >
+            <svg
+              *ngIf="!passwordVisible"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path
+                d="M1.5 12s3.8-6.5 10.5-6.5S22.5 12 22.5 12s-3.8 6.5-10.5 6.5S1.5 12 1.5 12Z"
+              />
+              <circle cx="12" cy="12" r="3.2" />
+            </svg>
+            <svg
+              *ngIf="passwordVisible"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path
+                d="M3 4.5 20 19.5M10.6 6C11 5.9 11.5 5.9 12 5.9c6.7 0 10.5 6.1 10.5 6.1a19 19 0 0 1-4 4.3M6.2 8A18.5 18.5 0 0 0 1.5 12s3.8 6.1 10.5 6.1c1.5 0 2.9-.3 4.2-.9M9.9 9.7a3.3 3.3 0 0 0 4.4 4"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
 
+      <div class="options">
+        <label class="remember-option">
+          <input type="checkbox" [(ngModel)]="rememberMe" [ngModelOptions]="{ standalone: true }">
+          <span>Remember Me</span>
+        </label>
+        <a href="#">Forgot Password?</a>
+      </div>
+
+      <button class="login-btn" type="submit" [disabled]="!canSubmit">
+        {{ isSubmitting ? 'Signing In...' : 'Sign In' }}
+      </button>
+
+      <div class="feedback success" *ngIf="message">{{ message }}</div>
+      <div class="feedback error" *ngIf="error">{{ error }}</div>
+
+      <p class="signup-link">
+        Don't have an account?
+        <a href="#">Sign Up</a>
+      </p>
+    </form>
+  </main>
 </div>
